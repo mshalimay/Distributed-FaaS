@@ -7,9 +7,9 @@ This repository implements a Function-As-A-Service platform that allow client's 
 - Parallelization at the level of computing nodes and within computing nodes.
 - OOP architechture
 
-The below image shows a sketch of the architechture
+Below image shows a sketch of the architechture
 
-![image](https://github.com/mshalimay/distributed-faas/assets/103153803/188b81ce-9549-4a92-a59b-0a645e942fb0)
+<img src="https://github.com/mshalimay/distributed-faas/assets/103153803/188b81ce-9549-4a92-a59b-0a645e942fb0" width="450" height="450">
 
 ## Simple summary and example: 
 Multiple users may specify arbitrary functions, such as below:
