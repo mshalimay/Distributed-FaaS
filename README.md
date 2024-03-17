@@ -1,5 +1,5 @@
-i# Distributed Function-As-A-Service.
-This repository implements the backend of a Function-As-A-Service platform that allow client's to run arbitrary Python functions in a distributed environment of computing nodes. Including:
+# Distributed Function-As-A-Service
+This repository implements a Function-As-A-Service platform that allow client's to run arbitrary Python functions in a distributed environment of computing nodes. Including:
 - REST protocols for client-server communication.
 - REP/REQ and ROUTER/DEALER socket patterns for distributed execution.
 - Integration of shared database for task registration and execution. 
