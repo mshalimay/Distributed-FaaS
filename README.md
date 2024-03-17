@@ -23,7 +23,7 @@ In summary, the service:
 - Serializes functions sent by users and store an associated task in a `REDIS` database.
 - Tasks are distributed to multiple computing nodes / workers for parallel execution.
    - Parallelization happens at the level of computing nodes (many nodes executing different tasks) and within a computing node (a worker sapwns subprocesses to execute its tasks).
-- Service notifies users their tasks is complete.
+- Service notifies users their tasks is complete and send results.
 
 # Operation modes
 The system can operate in three modes (see `Implementation` sections for more details):
