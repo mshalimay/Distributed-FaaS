@@ -11,7 +11,7 @@ Below image shows a sketch of the architechture
 
 <img src="https://github.com/mshalimay/distributed-faas/assets/103153803/188b81ce-9549-4a92-a59b-0a645e942fb0" width="450" height="450">
 
-## Simple summary and example: 
+## Summary and example: 
 Multiple users may specify arbitrary functions, such as below:
 ```python
 def slow_function():
@@ -25,7 +25,7 @@ In summary, the service:
    - Parallelization happens at the level of computing nodes (many nodes executing different tasks) and within a computing node (a worker sapwns subprocesses to execute its tasks).
 - Service notifies users their tasks is complete and send results.
 
-# Operation modes
+## Operation modes
 The system can operate in three modes (see `Implementation` sections for more details):
 - Push-mode: `TaskDispatcher` keeps track of alive workers and sends tasks to them performing load-balancing
    - Workers that connect to the system send a message to the `TaskDispatcher` when they are ready to work
