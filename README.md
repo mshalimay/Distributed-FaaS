@@ -262,5 +262,3 @@ The system can operate in three modes (see `Implementation` sections for more de
 **Limitations in reliability of implementations:**
 - if a task is retrieved from REDIS cchannel and something happens with the worker, the task is gone. There is no mechanism to re-do the task in case something goes wrong.
 	- This could be extended by keeping track of what workload was sent to which worker, a mechanism to decided that a worker has "died" and a mechanism to identify that a job has been done if a worker "ressucitates" and send the results again
-
-- In case of Push and Pull implementations, problems related to disconneceted workers / offline servers are not dealt with.
