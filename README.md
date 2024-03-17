@@ -6,21 +6,21 @@ The below image shows a sketch of the architechture
 ![image](https://github.com/mshalimay/distributed-faas/assets/103153803/188b81ce-9549-4a92-a59b-0a645e942fb0)
 
 ## Simple summary and example: 
-Users may specify a function as below:
+Multiple users may specify arbitrary functions, such as below:
 ```python
 def slow_function():
    time.sleep(100)
 ```
+And send to the service using REST protocols.
+
 In summary, the service:
-- Serializes the functions sent by the users.
-- Create associated tasks and store in an `REDIS` database.
-- Each computing node collect a groups of tasks for parallel execution.
-   - Parallelization happens at the level of computing nodes (many nodes executing different tasks)
-   - And within a computing node: a computing node spawns subprocesses to execute the tasks it has in parallel
-- Service notifies user their tasks is complete.
+- Serializes functions sent by users and store an associated task in a `REDIS` database.
+- Tasks are distributed to multiple computing nodes / workers for parallel execution.
+   - Parallelization happens at the level of computing nodes (many nodes executing different tasks) and within a computing node (a worker sapwns subprocesses to execute its tasks).
+- Service notifies users their tasks is complete.
 
 # Operation modes
-The system can operate in two modes (see `Push/Pull Implementation` sections for more details):
+The system can operate in three modes (see `Implementation` sections for more details):
 - Push-mode: `TaskDispatcher` keeps track of alive workers and sends tasks to them performing load-balancing
    - Workers that connect to the system send a message to the `TaskDispatcher` when they are ready to work
    - `TaskDispatcher` adds the worker to list of workers and send tasks if there is any
@@ -28,26 +28,22 @@ The system can operate in two modes (see `Push/Pull Implementation` sections for
    - Workers and `TaskDispatcher` send hearbeat signals to each other for failure identification.
      - If a worker stops sending heartbeat signals after some time, it is removed from the list and its work is redistributed among the remaining workers
      - A worker can reconnect if it was disconnected due to delays in communication 
+
 - Pull-mode: `TaskDispatcher` and workers interact via REP/REQ sockets.
   - `TaskDispatcher` listen to tasks via a `REP` socket and worker/computing nodes require work as they become free.
 
-Finally, the codebase also provides a local implementation for benchmarking of network bottlenecks.
+- Local-mode: local implementation for benchmarking of network and synchronization bottlenecks.
 
 # Codebase description
-- `helper_functions.py` contains functions common to all scripts
-- 
-
-
-# General specifications
-- Dispatcher and Workers communicate through a dictionary, with fields `type` and `data`
-	- every message is serialized/deserialized using the functions provided
-
-- Some parameters common to all scripts are in the file `config.ini`
-
--  `helper_functions.py` contains functions common to all scripts (including the serialization ones)
-
-- `TaskDispatcher` is implemented as a super class with three subclasses `LocalDispatcher`, `PushDispatcher` and `PullDispatcher` that inherits from it
-	- `TaskDispatcher` is responsible for starting the Redis client and subscribing to the `tasks` channel. It has variables and methods  common for all dispatchers, such as `query_redis`(.)
+- `helper_functions.py`: contains functions common to all scripts
+- `push_worker.py`: implements the `PushWorker` class
+- `pull_worker.py`: implements the `PullWorker` class
+- `task_dispatcher.py`: implements the `TaskDispatcher` class, including the subclasses `LocalDispatcher`, `PullDispatcher` and `PushDispatcher`
+    - `TaskDispatcher` is responsible for starting the Redis client and subscribing to the `tasks` channel. It has variables and methods  common for all dispatchers, such as `query_redis`(.)
+- `client_performance.py`: script to simulate a run of the whole service and collect performance metrics
+   - whole service includes: the client request, task processing, execution and delivery back to the client
+- `test_client.py`: suit of functions to test if service is operating correctly
+-  `config.ini`: parameters common to all files
 
 # Local Implementation
 ## Dispatcher and workers
@@ -62,7 +58,6 @@ Finally, the codebase also provides a local implementation for benchmarking of n
 		- dispatcher updates the redis database and update the number of `busy_workers`
 
 ## Comments
-
 -  A `deque` is used for the results to make the loop that searchs for a result faster:
 	- The `results`  record is re-utilized, so items are removed from it when ready. To check if any is ready, it is necessary to iterate over `results` because of the async returns
 	- For the loop, one could iterate through a data structure changing sizes (not good practice) or copy the whole DS. When the number of tasks is higher, the last approach introduces a loss of performance.
